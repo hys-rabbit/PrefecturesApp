@@ -1,6 +1,7 @@
 <?php
 
-require_once 'dao/prefecture_dao.php';
+require_once 'model/prefecture_dao.php';
+require_once 'model/prefecture_entity.php';
 
 // セレクトボックス定数
 $selectBox = Array(
@@ -25,29 +26,32 @@ if ($selectBoxIndex && $selectBoxIndex != 0)
 {
     switch ($sort) {
         case '1':
-            $dao->setOrder('name_hiragana', 'asc');
+            $dao->setOrderByHiragana();
             break;
         case '2':
-            $dao->setOrder('name_hiragana', 'desc');
+            $dao->setOrderByHiragana();
+            $dao->setDesc();
             break;
         case '3':
-            $dao->setOrder('name_romanization', 'asc');
+            $dao->setOrderByRomanization();
             break;
         case '4':
-            $dao->setOrder('name_romanization', 'desc');
+            $dao->setOrderByRomanization();
+            $dao->setDesc();
             break;
         case '5':
-            $dao->setOrder('population', 'asc');
+            $dao->setOrderByPopulation();
             break;
         case '6':
-            $dao->setOrder('population', 'desc');
+            $dao->setOrderByPopulation();
+            $dao->setDesc();
             break;
     }
 
     $selectBox[$selectBoxIndex]['selected'] = 'selected';
 }
 
-$prefectureList = $dao->findAll();
+$prefectureEntityArray = $dao->findAll();
 
 ?>
 
@@ -67,10 +71,10 @@ $prefectureList = $dao->findAll();
         <div style="padding: 10px;">
             <!-- 絞り込み検索テキストボックス -->
             <img src="assets/refine_icon.png" height="28px" alt="絞り込み検索" />&ensp;
-            <input name="refine" placeholder="絞り込み検索" type="text" onkeyup="refine(this.value)" value="<?php echo $refine ?>" />&ensp;
+            <input name="refine" placeholder="絞り込み検索" type="text" value="<?php echo $refine ?>" />&ensp;
             <!-- ソートセレクトボックス -->
             <img src="assets/sort_icon.png" height="28px" alt="ソート検索" />&ensp;
-            <select onchange="sort(this.value)">
+            <select name="sort" >
             <?php foreach ($selectBox as $item) { ?>
                 <option value="<?php echo $item['value'] ?>" <?php echo $item['selected'] ?> ><?php echo $item['contents'] ?></option>
             <?php } ?>
@@ -88,12 +92,12 @@ $prefectureList = $dao->findAll();
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($prefectureList as $prefecture) { ?>
+            <?php foreach ($prefectureEntityArray as $prefectureEntity) { ?>
                 <tr>
-                    <td><?php echo $prefecture['name_kanji'] ?></td>
-                    <td><?php echo $prefecture['name_hiragana'] ?></td>
-                    <td><?php echo $prefecture['name_romanization'] ?></td>
-                    <td><?php echo number_format($prefecture['population']) ?></td>
+                    <td><?php echo $prefectureEntity->nameKanji ?></td>
+                    <td><?php echo $prefectureEntity->nameHiragana ?></td>
+                    <td><?php echo $prefectureEntity->nameRomanization ?></td>
+                    <td><?php echo number_format($prefectureEntity->population) ?></td>
                 </tr>
             <?php } ?>
             </tbody>

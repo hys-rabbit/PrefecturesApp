@@ -30,7 +30,7 @@ abstract class DAO
     }
 
     /**
-     * 検索クエリ
+     * 検索
      */
     protected function select ($sql)
     {
